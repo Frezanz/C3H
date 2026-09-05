@@ -85,7 +85,7 @@ export default function PublicLayout() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            {!isFrontDoor && <ThemeToggle />}
             {user?.Id && <Link to="/profile" className="hidden items-center rounded-full border border-border bg-card p-1 shadow-xs transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex"><Avatar className="size-8"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar></Link>}
             {!user?.Id && <Link to="/login" className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">Sign in</Link>}
             <button type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-xs transition duration-(--transition-fast) hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><ApperIcon name={menuOpen ? 'X' : 'Menu'} size={19} /></button>
@@ -143,7 +143,7 @@ export default function PublicLayout() {
                 </div>
               )}
 
-              {updateDismissed && (
+              {(!latestUpdate || updateDismissed) && (
                 <div className="absolute bottom-6 right-5 z-20 sm:bottom-8 sm:right-8">
                   <div className="relative">
                     {createOpen && <div className="absolute bottom-14 right-0 mb-2 w-[min(86vw,320px)] overflow-hidden rounded-2xl border border-border bg-card p-2 text-left shadow-2xl backdrop-blur-xl">
