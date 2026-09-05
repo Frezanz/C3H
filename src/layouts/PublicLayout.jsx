@@ -8,7 +8,6 @@ import ApperIcon from '@/components/ApperIcon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
 import { getProfileMeta } from '@/services/userPermissions';
-import { supabase } from '@/services/supabase';
 
 const navigation = [
   { to: '/questions', label: 'Questions', description: 'Ask, explore and discuss', icon: 'CircleHelp' },
@@ -18,15 +17,6 @@ const navigation = [
   { to: '/principles', label: 'Principles', description: 'How C3H approaches things', icon: 'BookOpen' },
 ];
 
-const createOptions = [
-  { key: 'post', label: 'Post', description: 'Share plain text, ideas, questions or updates.', icon: 'PenLine' },
-  { key: 'group', label: 'Group', description: 'Start a community group', icon: 'Users' },
-  { key: 'project', label: 'Project', description: 'Create something people can work on', icon: 'FolderKanban' },
-  { key: 'research', label: 'Research', description: 'Paper, study, dataset or finding', icon: 'BookOpen' },
-  { key: 'announcement', label: 'Announcement', description: 'Share an important update', icon: 'Megaphone' },
-  { key: 'report', label: 'Report', description: 'Document an issue or finding', icon: 'FileBarChart' },
-];
-
 export default function PublicLayout() {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
@@ -34,35 +24,15 @@ export default function PublicLayout() {
   const home = user?.Id ? '/dashboard' : '/';
   const isFrontDoor = location.pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
-  const [latestUpdate, setLatestUpdate] = useState(null);
-  const [updateDismissed, setUpdateDismissed] = useState(false);
 
   useEffect(() => {
     setMenuOpen(false);
-    setCreateOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
-
-  useEffect(() => {
-    if (!isFrontDoor || !supabase) return;
-    let cancelled = false;
-    const loadLatest = async () => {
-      const { data } = await supabase
-        .from('announcements')
-        .select('id,title,body,created_at')
-        .eq('published', true)
-        .order('created_at', { ascending: false })
-        .limit(1);
-      if (!cancelled && data?.[0]) setLatestUpdate(data[0]);
-    };
-    loadLatest();
-    return () => { cancelled = true; };
-  }, [isFrontDoor]);
 
   const profileMeta = getProfileMeta(profile);
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.emailAddress || 'Member';
@@ -124,34 +94,7 @@ export default function PublicLayout() {
 
       <main>
         <ErrorBoundary>
-          {isFrontDoor ? (
-            <div className="relative min-h-[calc(100vh-4rem)]">
-              <Outlet />
-              {latestUpdate && !updateDismissed && (
-                <div className="pointer-events-none fixed inset-x-4 bottom-5 z-10 mx-auto w-[min(92vw,620px)] sm:bottom-7">
-                  <article className="pointer-events-auto relative max-h-[42vh] overflow-hidden rounded-[1.5rem] border border-border bg-card/95 p-5 text-left shadow-2xl backdrop-blur-xl sm:p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0"><div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Latest update</div><h2 className="mt-1 font-heading text-xl font-semibold leading-tight sm:text-2xl">{latestUpdate.title}</h2></div>
-                      <button type="button" aria-label="Dismiss update" onClick={() => setUpdateDismissed(true)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="X" size={17} /></button>
-                    </div>
-                    <div className="mt-3 max-h-[24vh] overflow-y-auto pr-1 text-sm leading-6 text-muted-foreground">{latestUpdate.body}</div>
-                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/70 pt-3"><span className="text-xs text-muted-foreground">Community update</span><button type="button" onClick={() => setUpdateDismissed(true)} className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">OK</button></div>
-                  </article>
-                </div>
-              )}
-              {(!latestUpdate || updateDismissed) && (
-                <div className="fixed bottom-6 right-5 z-20 sm:bottom-8 sm:right-8">
-                  <div className="relative">
-                    {createOpen && <div className="absolute bottom-14 right-0 mb-2 w-[min(86vw,320px)] overflow-hidden rounded-2xl border border-border bg-card p-2 text-left shadow-2xl backdrop-blur-xl">
-                      <div className="px-3 py-2"><div className="text-sm font-semibold">Create</div><div className="text-xs text-muted-foreground">Add something to C3H</div></div>
-                      {createOptions.map((option) => <Link key={option.key} to={`/create?type=${option.key}`} onClick={() => setCreateOpen(false)} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary group-hover:bg-background"><ApperIcon name={option.icon} size={16} /></span><span className="min-w-0 flex-1"><span className="block text-sm font-medium">{option.label}</span><span className="block text-xs text-muted-foreground">{option.description}</span></span><ApperIcon name="ChevronRight" size={14} className="text-muted-foreground" /></Link>)}
-                    </div>}
-                    <button type="button" aria-label={createOpen ? 'Close create menu' : 'Create'} aria-expanded={createOpen} onClick={() => setCreateOpen((value) => !value)} className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"><ApperIcon name={createOpen ? 'X' : 'Plus'} size={21} /></button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8"><Outlet /></div>}
+          {isFrontDoor ? <Outlet /> : <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8"><Outlet /></div>}
         </ErrorBoundary>
       </main>
     </div>
