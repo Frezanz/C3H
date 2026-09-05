@@ -49,7 +49,10 @@ export async function signUp(email, password, metadata = {}) {
   const { data, error } = await requireClient().auth.signUp({
     email: email.trim(),
     password,
-    options: { data: metadata },
+    options: {
+      data: metadata,
+      emailRedirectTo: `${window.location.origin}/callback`,
+    },
   });
   if (error) throw error;
   return { user: normalizeUser(data.user), session: data.session };
