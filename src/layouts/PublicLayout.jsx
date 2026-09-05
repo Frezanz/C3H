@@ -8,6 +8,7 @@ import Icon from '@/components/Icon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
 import { getProfileMeta } from '@/services/userPermissions';
+import { signOut } from '@/services/auth';
 
 const navigation = [
   { to: '/questions', label: 'Questions', description: 'Ask, explore and discuss', icon: 'CircleHelp' },
@@ -24,6 +25,7 @@ export default function PublicLayout() {
   const home = user?.Id ? '/dashboard' : '/';
   const isFrontDoor = location.pathname === '/';
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -39,6 +41,19 @@ export default function PublicLayout() {
   const initials = displayName.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'M';
 
   const navClass = ({ isActive }) => `group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] ${isActive ? 'bg-muted text-foreground shadow-xs' : 'text-foreground'}`;
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await signOut();
+      setMenuOpen(false);
+      window.location.assign('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -82,6 +97,7 @@ export default function PublicLayout() {
                 <NavLink to="/dashboard" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="LayoutDashboard" size={17} /></span><span className="flex-1">Dashboard</span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
                 <NavLink to="/messages" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="Bell" size={17} /></span><span className="flex-1">Messages</span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
                 <NavLink to="/profile" className={navClass}><Avatar className="size-9"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar><span className="min-w-0 flex-1"><span className="block truncate">{displayName}</span><span className="block text-xs font-normal text-muted-foreground">{profileMeta?.label ?? 'Member'}</span></span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
+                <button type="button" onClick={handleLogout} disabled={loggingOut} className="group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-foreground transition hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] disabled:cursor-wait disabled:opacity-60" aria-label="Log out"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="LogOut" size={17} /></span><span className="flex-1 text-left">{loggingOut ? 'Logging out…' : 'Log out'}</span></button>
               </nav> : <Link to="/login" className="flex items-center gap-3 rounded-2xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/10"><Icon name="LogIn" size={17} /></span><span className="flex-1">Sign in</span><Icon name="ArrowUpRight" size={16} /></Link>}
             </div>
             <div className="shrink-0 border-t border-border/70 px-4 py-4 sm:px-5">
