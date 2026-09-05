@@ -114,7 +114,6 @@ export default function PublicLayout() {
                 <NavLink to="/profile" className={navClass}><Avatar className="size-9"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar><span className="min-w-0 flex-1"><span className="block truncate">{displayName}</span><span className="block text-xs font-normal text-muted-foreground">{profileMeta?.label ?? 'Member'}</span></span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
               </nav> : <Link to="/login" className="flex items-center gap-3 rounded-2xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/10"><ApperIcon name="LogIn" size={17} /></span><span className="flex-1">Sign in</span><ApperIcon name="ArrowUpRight" size={16} /></Link>}
             </div>
-            <div className="shrink-0 border-t border-border bg-muted/30 p-3 sm:p-4"><ThemeToggle className="w-full justify-between rounded-2xl px-3 py-2.5" /></div>
           </aside>
         </>
       )}
