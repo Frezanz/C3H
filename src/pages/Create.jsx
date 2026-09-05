@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ApperIcon from '@/components/ApperIcon';
+import PeoplePicker from '@/components/PeoplePicker';
 
 export const route = { path: '/create', layout: 'public', access: 'public' };
 
@@ -22,6 +23,12 @@ const FIELD_COPY = {
   report: { label: 'Report', title: 'Create a report', prompt: 'Describe the issue, observation or evidence' },
 };
 
+const VISIBILITY_OPTIONS = [
+  { key: 'public', label: 'Public', description: 'Anyone can view this content.', icon: 'Globe2' },
+  { key: 'community', label: 'C3H members', description: 'Only signed-in C3H members can view it.', icon: 'Users' },
+  { key: 'selected', label: 'Selected people', description: 'Only people you choose can view it.', icon: 'UserRoundCheck' },
+];
+
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 export default function Create() {
@@ -38,6 +45,11 @@ export default function Create() {
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
+  const [visibility, setVisibility] = useState('public');
+  const [selectedPeople, setSelectedPeople] = useState([]);
+  const [passwordEnabled, setPasswordEnabled] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const active = FIELD_COPY[type] ?? FIELD_COPY.post;
 
   const selectType = (nextType) => {
@@ -76,7 +88,7 @@ export default function Create() {
   };
 
   const handleTagKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ',' ) {
+    if (event.key === 'Enter' || event.key === ',') {
       event.preventDefault();
       addTag();
     }
@@ -190,8 +202,63 @@ export default function Create() {
               </div>
             )}
 
+            <section className="rounded-2xl border border-border bg-background p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name="Shield" size={17} /></div>
+                <div className="min-w-0">
+                  <div className="text-base font-heading font-semibold">Access</div>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Control who can open this content. These settings will be enforced when the live content model is connected.</p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-2">
+                {VISIBILITY_OPTIONS.map((option) => {
+                  const selected = visibility === option.key;
+                  return (
+                    <button type="button" key={option.key} onClick={() => setVisibility(option.key)} className={`flex items-center gap-3 rounded-xl border px-3 py-3 text-left transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99] ${selected ? 'border-primary/40 bg-muted' : 'border-border bg-card'}`}>
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-background text-primary"><ApperIcon name={option.icon} size={16} /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium">{option.label}</span>
+                        <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{option.description}</span>
+                      </span>
+                      {selected && <ApperIcon name="Check" size={17} className="shrink-0 text-primary" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {visibility === 'selected' && (
+                <div className="mt-4 rounded-xl border border-border bg-card p-3">
+                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">People who can view</div>
+                  <div className="mt-2">
+                    <PeoplePicker value={selectedPeople} onChange={setSelectedPeople} multiple placeholder="Choose people" aria-label="Choose people who can view this content" />
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">Only the selected members will be granted access.</p>
+                </div>
+              )}
+
+              <div className="mt-4 rounded-xl border border-border bg-card p-3">
+                <div className="flex items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium">Add a password</div>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Anyone with the password can view the content. Use any characters and any length.</p>
+                  </div>
+                  <button type="button" role="switch" aria-checked={passwordEnabled} onClick={() => setPasswordEnabled((value) => !value)} className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full border transition duration-(--transition-fast) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] ${passwordEnabled ? 'border-primary bg-primary' : 'border-border bg-muted'}`}>
+                    <span className={`absolute top-1 h-4 w-4 rounded-full bg-background transition-transform duration-(--transition-fast) ${passwordEnabled ? 'left-6' : 'left-1'}`} />
+                  </button>
+                </div>
+                {passwordEnabled && (
+                  <div className="mt-3 flex gap-2">
+                    <input type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter a password" autoComplete="new-password" className="min-w-0 flex-1 rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
+                    <button type="button" onClick={() => setShowPassword((value) => !value)} className="shrink-0 rounded-lg border border-border px-3 py-2 text-sm font-medium transition hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]">{showPassword ? 'Hide' : 'Show'}</button>
+                  </div>
+                )}
+              </div>
+            </section>
+
             <div className="rounded-xl border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
-              This creates the right starting surface for <span className="font-medium text-foreground">{active.label.toLowerCase()}</span>. Saving to the database, files, review and publishing rules will be wired into the live content model next.
+              <div className="font-medium text-foreground">Access summary</div>
+              <p className="mt-1">{VISIBILITY_OPTIONS.find((option) => option.key === visibility)?.label} can view this {active.label.toLowerCase()}{passwordEnabled ? ' with the password' : ''}. {visibility === 'selected' && selectedPeople.length ? `${selectedPeople.length} people selected.` : ''}</p>
             </div>
 
             <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
