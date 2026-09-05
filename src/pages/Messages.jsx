@@ -8,7 +8,7 @@ export const route = { path: '/messages', layout: 'owner', access: 'authenticate
 export const nav = { icon: 'Bell', label: 'Messages', section: 'Member', profiles: null, order: 2 };
 
 export default function Messages() {
-  const { invoke, loading } = useFunction(import.meta.env.VITE_SUPABASE_COMMUNITY_API, { showError: false });
+  const { invoke, loading } = useFunction('supabase-community-api', { showError: false });
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
 

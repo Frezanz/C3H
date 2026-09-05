@@ -40,8 +40,8 @@ export default function Create() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef(null);
-  const { invoke: createContent, loading: creating } = useFunction(import.meta.env.VITE_CONTENT_API, { showError: false });
-  const { invoke: listGroups } = useFunction(import.meta.env.VITE_CONTENT_API, { showError: false });
+  const { invoke: createContent, loading: creating } = useFunction('content-api', { showError: false });
+  const { invoke: listGroups } = useFunction('content-api', { showError: false });
   const [groups, setGroups] = useState([]);
   const initialType = useMemo(() => {
     const requestedType = new URLSearchParams(location.search || '').get('type');

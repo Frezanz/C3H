@@ -14,7 +14,7 @@ export const nav = { icon: 'UserRound', label: 'Profile', section: 'Member', pro
 
 export default function Profile() {
   const user = useSelector((state) => state.user.user);
-  const { invoke, loading } = useFunction(import.meta.env.VITE_SUPABASE_COMMUNITY_API, { showError: false });
+  const { invoke, loading } = useFunction('supabase-community-api', { showError: false });
   const [displayName, setDisplayName] = useState('');
   const [notifications, setNotifications] = useState(true);
   const [saved, setSaved] = useState(false);

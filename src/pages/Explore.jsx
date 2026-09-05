@@ -49,7 +49,7 @@ export default function Explore() {
   const [feed, setFeed] = useState([]);
   const [feedLoading, setFeedLoading] = useState(true);
   const [feedError, setFeedError] = useState('');
-  const { invoke } = useFunction(import.meta.env.VITE_PUBLIC_FEED, {});
+  const { invoke } = useFunction('public-feed', {});
 
   useEffect(() => {
     let cancelled = false;

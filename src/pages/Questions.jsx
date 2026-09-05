@@ -10,9 +10,9 @@ export const nav = { icon: 'CircleHelp', label: 'Questions', section: 'Explore',
 
 export default function Questions() {
   const user = useSelector((state) => state.user.user);
-  const { invoke, loading } = useFunction(import.meta.env.VITE_SUPABASE_COMMUNITY_API, { showError: false });
-  const { invoke: sendPrivateResponse } = useFunction(import.meta.env.VITE_CREATOR_RESPONSE, { showError: false });
-  const { invoke: contentInvoke } = useFunction(import.meta.env.VITE_CONTENT_API, { showError: false });
+  const { invoke, loading } = useFunction('supabase-community-api', { showError: false });
+  const { invoke: sendPrivateResponse } = useFunction('creator-response', { showError: false });
+  const { invoke: contentInvoke } = useFunction('content-api', { showError: false });
   const [questions, setQuestions] = useState([]);
   const [comments, setComments] = useState({});
   const [answers, setAnswers] = useState({});

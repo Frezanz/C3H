@@ -13,7 +13,7 @@ export const nav = { icon: 'LayoutDashboard', label: 'Dashboard', section: 'Memb
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.user);
-  const { invoke, loading } = useFunction(import.meta.env.VITE_SUPABASE_COMMUNITY_API, { showError: false });
+  const { invoke, loading } = useFunction('supabase-community-api', { showError: false });
   const [questions, setQuestions] = useState([]);
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
