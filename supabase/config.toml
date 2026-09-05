@@ -1,2 +1,5 @@
 [functions.public-feed]
 verify_jwt = false
+
+[functions.public-content]
+verify_jwt = false
