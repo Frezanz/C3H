@@ -3,7 +3,6 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { APP_CONFIG } from '@/config/app.config';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
-import ThemeToggle from '@/components/ThemeToggle';
 import ApperIcon from '@/components/ApperIcon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
@@ -19,11 +18,12 @@ const navigation = [
 ];
 
 const createOptions = [
-  { label: 'Group', description: 'Start a community group', icon: 'Users', to: '/participate' },
-  { label: 'Project', description: 'Create a project', icon: 'FolderKanban', to: '/participate' },
-  { label: 'Research paper', description: 'Publish or propose research', icon: 'FileText', to: '/participate' },
-  { label: 'Notice / announcement', description: 'Share an important update', icon: 'Megaphone', to: '/announcements' },
-  { label: 'Report', description: 'Document an issue or finding', icon: 'FileBarChart', to: '/participate' },
+  { key: 'post', label: 'Post', description: 'Share plain text, ideas, questions or updates.', icon: 'PenLine' },
+  { key: 'group', label: 'Group', description: 'Start a community group', icon: 'Users' },
+  { key: 'project', label: 'Project', description: 'Create something people can work on', icon: 'FolderKanban' },
+  { key: 'research', label: 'Research', description: 'Paper, study, dataset or finding', icon: 'BookOpen' },
+  { key: 'announcement', label: 'Announcement', description: 'Share an important update', icon: 'Megaphone' },
+  { key: 'report', label: 'Report', description: 'Document an issue or finding', icon: 'FileBarChart' },
 ];
 
 export default function PublicLayout() {
@@ -148,7 +148,7 @@ export default function PublicLayout() {
                   <div className="relative">
                     {createOpen && <div className="absolute bottom-14 right-0 mb-2 w-[min(86vw,320px)] overflow-hidden rounded-2xl border border-border bg-card p-2 text-left shadow-2xl backdrop-blur-xl">
                       <div className="px-3 py-2"><div className="text-sm font-semibold">Create</div><div className="text-xs text-muted-foreground">Add something to C3H</div></div>
-                      {createOptions.map((option) => <Link key={option.label} to={option.to} onClick={() => setCreateOpen(false)} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary group-hover:bg-background"><ApperIcon name={option.icon} size={16} /></span><span className="min-w-0 flex-1"><span className="block text-sm font-medium">{option.label}</span><span className="block text-xs text-muted-foreground">{option.description}</span></span><ApperIcon name="ChevronRight" size={14} className="text-muted-foreground" /></Link>)}
+                      {createOptions.map((option) => <Link key={option.key} to={`/create?type=${option.key}`} onClick={() => setCreateOpen(false)} className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary group-hover:bg-background"><ApperIcon name={option.icon} size={16} /></span><span className="min-w-0 flex-1"><span className="block text-sm font-medium">{option.label}</span><span className="block text-xs text-muted-foreground">{option.description}</span></span><ApperIcon name="ChevronRight" size={14} className="text-muted-foreground" /></Link>)}
                     </div>}
                     <button type="button" aria-label={createOpen ? 'Close create menu' : 'Create'} aria-expanded={createOpen} onClick={() => setCreateOpen((value) => !value)} className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl transition hover:scale-105 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"><ApperIcon name={createOpen ? 'X' : 'Plus'} size={21} /></button>
                   </div>
