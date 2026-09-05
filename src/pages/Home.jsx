@@ -23,7 +23,7 @@ export default function Home() {
           </p>
 
           <Link
-            to="/questions"
+            to="/explore"
             className="mt-10 inline-flex items-center gap-3 rounded-full border border-border bg-background px-7 py-4 text-base font-semibold shadow-xs transition hover:bg-muted hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]"
           >
             Explore C3H
