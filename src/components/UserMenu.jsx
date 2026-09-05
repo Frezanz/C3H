@@ -15,6 +15,9 @@ export default function UserMenu({ user, initials, displayName, logout }) {
       </div>
       <div className="mt-3"><ThemeToggle className="w-full justify-between" /></div>
       <div className="mt-3 grid gap-1">
+        <Link to="/dashboard" className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="LayoutDashboard" size={15} /> Dashboard</Link>
+        <Link to="/messages" className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="Bell" size={15} /> Messages</Link>
+        <Link to="/profile" className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="UserRound" size={15} /> Profile</Link>
         <Link to="/principles" className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="BookOpen" size={15} /> Principles</Link>
         <button type="button" onClick={logout} className="flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="LogOut" size={15} /> Sign out</button>
       </div>
