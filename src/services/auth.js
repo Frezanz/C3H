@@ -9,12 +9,19 @@ function requireClient() {
 
 export function normalizeUser(user) {
   if (!user) return null;
+  const metadata = user.user_metadata || {};
+  const displayName = metadata.displayName || metadata.display_name || metadata.name || user.email?.split('@')[0] || 'Member';
+  const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
   return {
     ...user,
+    Id: user.id,
+    id: user.id,
     emailAddress: user.email,
-    profile: user.user_metadata?.profile ?? '',
-    profileLabel: user.user_metadata?.profileLabel ?? 'Member',
-    displayName: user.user_metadata?.displayName ?? user.user_metadata?.name ?? user.email?.split('@')[0] ?? 'Member',
+    profile: metadata.profile ?? '',
+    profileLabel: metadata.profileLabel ?? 'Member',
+    displayName,
+    firstName: metadata.firstName || metadata.first_name || nameParts[0] || 'Member',
+    lastName: metadata.lastName || metadata.last_name || nameParts.slice(1).join(' '),
   };
 }
 
