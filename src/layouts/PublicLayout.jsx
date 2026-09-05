@@ -86,7 +86,6 @@ export default function PublicLayout() {
           </Link>
 
           <div className="flex items-center gap-2">
-            {!isFrontDoor && <ThemeToggle />}
             {user?.Id && <Link to="/profile" className="hidden items-center rounded-full border border-border bg-card p-1 shadow-xs transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex"><Avatar className="size-8"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar></Link>}
             {!user?.Id && <Link to="/login" className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">Sign in</Link>}
             <button type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-xs transition duration-(--transition-fast) hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><ApperIcon name={menuOpen ? 'X' : 'Menu'} size={19} /></button>
@@ -114,6 +113,10 @@ export default function PublicLayout() {
                 <NavLink to="/messages" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name="Bell" size={17} /></span><span className="flex-1">Messages</span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
                 <NavLink to="/profile" className={navClass}><Avatar className="size-9"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar><span className="min-w-0 flex-1"><span className="block truncate">{displayName}</span><span className="block text-xs font-normal text-muted-foreground">{profileMeta?.label ?? 'Member'}</span></span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
               </nav> : <Link to="/login" className="flex items-center gap-3 rounded-2xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/10"><ApperIcon name="LogIn" size={17} /></span><span className="flex-1">Sign in</span><ApperIcon name="ArrowUpRight" size={16} /></Link>}
+            </div>
+            <div className="shrink-0 border-t border-border/70 px-4 py-4 sm:px-5">
+              <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Appearance</div>
+              <ThemeToggle className="w-full justify-center" />
             </div>
           </aside>
         </>
