@@ -1,0 +1,2 @@
+[functions.public-feed]
+verify_jwt = false
