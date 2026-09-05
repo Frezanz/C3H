@@ -43,7 +43,7 @@ export default function Dashboard() {
     <section className="rounded-3xl bg-primary p-6 text-primary-foreground shadow-lg sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4"><Avatar size="lg"><AvatarFallback className="bg-primary-foreground text-primary">{initials}</AvatarFallback></Avatar><div><div className="text-xs font-medium uppercase tracking-wide opacity-75">Member workspace</div><h1 className="mt-1 text-2xl font-heading font-semibold tracking-tight sm:text-3xl">Welcome, {name}.</h1><p className="mt-2 text-sm leading-relaxed opacity-80">Stay informed, participate in discussions, and build useful community capability.</p></div></div>
-        <Button asChild variant="secondary" className="shrink-0"><Link to="/questions"><Icon name="CircleHelp" size={16} /> Explore questions</Link></Button>
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row"><Button asChild variant="secondary"><Link to="/create"><Icon name="Plus" size={16} /> Create</Link></Button><Button asChild variant="secondary" className="shrink-0"><Link to="/questions"><Icon name="CircleHelp" size={16} /> Explore questions</Link></Button></div>
       </div>
     </section>
 
