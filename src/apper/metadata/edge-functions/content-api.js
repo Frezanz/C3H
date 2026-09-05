@@ -2,6 +2,7 @@ import apper from 'https://cdn.apper.io/actions/apper-actions.js';
 import { createClient } from 'npm:@supabase/supabase-js';
 
 const SUPABASE_URL = 'https://miyiowbmpatjyeovkznr.supabase.co';
+const encoder = new TextEncoder();
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
@@ -23,11 +24,31 @@ async function getActor() {
   return apperClient?.user || null;
 }
 
-function accessAllowed(content, userKey, selectedPeople = []) {
+async function sha256(value) {
+  const buffer = await crypto.subtle.digest('SHA-256', encoder.encode(value));
+  return Array.from(new Uint8Array(buffer)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function randomToken() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function accessAllowed(content, userKey, selectedPeople = [], groupMember = false, passwordVerified = false) {
+  if (content.password_hash && !passwordVerified) return false;
   if (content.visibility === 'public') return true;
   if (content.visibility === 'community') return Boolean(userKey);
   if (content.visibility === 'selected') return selectedPeople.some((key) => String(key) === String(userKey));
+  if (content.visibility === 'group') return groupMember;
   return false;
+}
+
+async function groupMembership(supabase, groupKey, userKey) {
+  if (!groupKey || !userKey) return false;
+  const { data, error } = await supabase.from('group_members').select('id').eq('group_id', groupKey).eq('user_key', String(userKey)).maybeSingle();
+  if (error) return false;
+  return Boolean(data);
 }
 
 apper.serve(async (req) => {
@@ -49,7 +70,7 @@ apper.serve(async (req) => {
       const title = String(body.title || '').trim();
       const contentBody = String(body.body || '').trim();
       const visibility = String(body.visibility || 'public').trim().toLowerCase();
-      const password = String(body.password || '');
+      const password = typeof body.password === 'string' ? body.password : '';
       const selectedPeople = Array.isArray(body.selected_people) ? body.selected_people.map(String).filter(Boolean) : [];
       const selectedGroup = String(body.selected_group || '').trim() || null;
       const allowedTypes = ['post', 'announcement', 'group', 'project', 'research', 'report'];
@@ -60,20 +81,12 @@ apper.serve(async (req) => {
       if (!allowedVisibility.includes(visibility)) return json({ success: false, error: 'Unsupported visibility.' }, 400);
       if (visibility === 'selected' && !selectedPeople.length) return json({ success: false, error: 'Select at least one member.' }, 400);
       if (visibility === 'group' && !selectedGroup) return json({ success: false, error: 'Select a group.' }, 400);
-      if (password.length && password.length < 1) return json({ success: false, error: 'Invalid password.' }, 400);
       if (title.length > 240 || contentBody.length > 50000) return json({ success: false, error: 'Content exceeds the allowed length.' }, 400);
 
-      const passwordHash = password ? await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password)).then((buffer) => Array.from(new Uint8Array(buffer)).map((byte) => byte.toString(16).padStart(2, '0')).join('')) : null;
+      const passwordHash = password.length ? await sha256(password) : null;
       const { data: content, error } = await supabase.from('content_items').insert({
-        type,
-        title: title || null,
-        body: contentBody,
-        author_key: String(userKey),
-        author_name: userName,
-        visibility,
-        password_hash: passwordHash,
-        group_key: selectedGroup,
-        published: false,
+        type, title: title || null, body: contentBody, author_key: String(userKey), author_name: userName,
+        visibility, password_hash: passwordHash, group_key: selectedGroup, published: false,
       }).select().single();
       if (error) return json({ success: false, error: error.message }, 400);
 
@@ -85,7 +98,7 @@ apper.serve(async (req) => {
           return json({ success: false, error: aclError.message }, 400);
         }
       }
-      return json({ success: true, data: { ...content, password_protected: Boolean(passwordHash) } }, 201);
+      return json({ success: true, data: { id: content.id, published: false, password_protected: Boolean(passwordHash) } }, 201);
     }
 
     if (action === 'publish_content') {
@@ -97,9 +110,35 @@ apper.serve(async (req) => {
       return json({ success: true, data: { id: data.id, published: true } });
     }
 
+    if (action === 'list_groups') {
+      const { data, error } = await supabase.from('groups').select('id,name').order('name', { ascending: true });
+      if (error) return json({ success: false, error: error.message }, 400);
+      return json({ success: true, data: data || [] });
+    }
+
+    if (action === 'verify_content_password') {
+      const contentId = String(body.content_id || '').trim();
+      const password = typeof body.password === 'string' ? body.password : '';
+      if (!contentId || !password) return json({ success: false, error: 'content_id and password are required.' }, 400);
+      const { data: content, error } = await supabase.from('content_items').select('id,password_hash,published').eq('id', contentId).eq('published', true).maybeSingle();
+      if (error) return json({ success: false, error: error.message }, 400);
+      if (!content) return json({ success: false, error: 'Content was not found.' }, 404);
+      if (!content.password_hash) return json({ success: false, error: 'This content is not password protected.' }, 400);
+      const candidate = await sha256(password);
+      if (candidate !== content.password_hash) return json({ success: false, error: 'Incorrect password.' }, 403);
+      const token = randomToken();
+      const tokenHash = await sha256(token);
+      const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+      const { error: grantError } = await supabase.from('content_access_grants').upsert({ content_id: contentId, user_key: String(userKey), token_hash: tokenHash, expires_at: expiresAt }, { onConflict: 'content_id,user_key' });
+      if (grantError) return json({ success: false, error: grantError.message }, 400);
+      return json({ success: true, data: { access_token: token, expires_at: expiresAt } });
+    }
+
     if (action === 'list_content') {
       const type = String(body.type || '').trim().toLowerCase();
-      const { data, error } = await supabase.from('content_items').select('id,type,title,body,author_key,author_name,visibility,group_key,published,created_at,updated_at').eq('published', true).eq('type', type).order('created_at', { ascending: false });
+      const accessToken = typeof body.access_token === 'string' ? body.access_token : '';
+      const tokenHash = accessToken ? await sha256(accessToken) : '';
+      const { data, error } = await supabase.from('content_items').select('id,type,title,body,author_key,author_name,visibility,group_key,published,created_at,updated_at,password_hash').eq('published', true).eq('type', type).order('created_at', { ascending: false });
       if (error) return json({ success: false, error: error.message }, 400);
       const ids = (data || []).map((row) => row.id);
       let people = [];
@@ -108,10 +147,21 @@ apper.serve(async (req) => {
         if (aclError) return json({ success: false, error: aclError.message }, 400);
         people = acl || [];
       }
-      const visible = (data || []).filter((row) => {
+      const grantIds = new Set();
+      if (tokenHash && ids.length) {
+        const { data: grants } = await supabase.from('content_access_grants').select('content_id').in('content_id', ids).eq('user_key', String(userKey)).eq('token_hash', tokenHash).gt('expires_at', new Date().toISOString());
+        (grants || []).forEach((grant) => grantIds.add(grant.content_id));
+      }
+      const visible = [];
+      for (const row of data || []) {
         const keys = people.filter((item) => item.content_id === row.id).map((item) => item.user_key);
-        return accessAllowed(row, String(userKey), keys);
-      }).map((row) => ({ ...row, password_protected: false }));
+        const isPasswordVerified = !row.password_hash || grantIds.has(row.id);
+        const member = row.visibility === 'group' ? await groupMembership(supabase, row.group_key, String(userKey)) : false;
+        if (accessAllowed(row, String(userKey), keys, member, isPasswordVerified)) {
+          const { password_hash: _hash, ...safeRow } = row;
+          visible.push({ ...safeRow, password_protected: Boolean(row.password_hash) });
+        }
+      }
       return json({ success: true, data: visible });
     }
 
