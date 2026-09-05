@@ -6,7 +6,6 @@ import { ErrorBoundary } from '@/components/ui/error-boundary';
 import ThemeToggle from '@/components/ThemeToggle';
 import ApperIcon from '@/components/ApperIcon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { useProfile } from '@/hooks/useProfile';
 import { getProfileMeta } from '@/services/userPermissions';
 
@@ -39,7 +38,7 @@ export default function PublicLayout() {
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.emailAddress || 'Member';
   const initials = displayName.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'M';
 
-  const navClass = ({ isActive }) => `group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${isActive ? 'bg-accent text-accent-foreground' : 'text-foreground'}`;
+  const navClass = ({ isActive }) => `group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] ${isActive ? 'bg-muted text-foreground shadow-xs' : 'text-foreground'}`;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -81,8 +80,8 @@ export default function PublicLayout() {
 
       {menuOpen && (
         <>
-          <button type="button" aria-label="Close menu overlay" onClick={() => setMenuOpen(false)} className="fixed inset-0 z-[calc(var(--z-sticky)+1)] cursor-default bg-black/25 backdrop-blur-[2px]" />
-          <aside className="fixed right-0 top-0 z-[calc(var(--z-sticky)+2)] flex h-dvh w-[min(88vw,380px)] flex-col border-l border-border bg-background shadow-2xl" aria-label="C3H menu">
+          <button type="button" aria-label="Close menu overlay" onClick={() => setMenuOpen(false)} className="fixed inset-0 z-[calc(var(--z-sticky)+1)] cursor-default bg-background/60 backdrop-blur-[2px]" />
+          <aside className="fixed right-0 top-0 z-[calc(var(--z-sticky)+2)] flex h-dvh w-[min(50vw,380px)] min-w-[280px] max-w-[50vw] flex-col border-l border-border bg-background shadow-2xl" aria-label="C3H menu">
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 px-4 sm:px-5">
               <div>
                 <div className="font-heading text-base font-semibold">C3H</div>
