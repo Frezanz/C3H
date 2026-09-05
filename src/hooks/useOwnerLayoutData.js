@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useAuth } from '@/layouts/RootLayout';
 import { APP_CONFIG, AUTH_PROFILES, GENERIC_AUTH } from '@/config/app.config';
 import { useFetch } from '@/hooks/useFetch';
-import { sdk } from '@/services/sdk';
+import { supabase } from '@/services/supabase';
 
 // Auto-discover nav items and footer pages from page exports
 const pageMods = import.meta.glob('/src/pages/**/*.jsx', { eager: true });
@@ -20,19 +20,15 @@ const footerPages = Object.entries(pageMods)
 const countItems = discoveredNavItems.filter((item) => item.count?.table);
 
 async function fetchCounts() {
-  if (!countItems.length) return {};
-  const results = await Promise.all(countItems.map((item) =>
-    sdk.table(item.count.table)
-      .select([{ field: 'Id' }])
-      .aggregate([{ id: 'c', fields: [{ field: 'Id', fn: 'Count', alias: 'count' }], ...(item.count.where ? { where: item.count.where } : {}) }])
-      .limit(1)
-      .fetch()
-  ));
+  if (!supabase || !countItems.length) return {};
+  const results = await Promise.all(countItems.map(async (item) => {
+    let query = supabase.from(item.count.table).select('id', { count: 'exact', head: true });
+    if (item.count.where && typeof item.count.where === 'object') query = query.match(item.count.where);
+    const { count, error } = await query;
+    return { count: error ? 0 : (count ?? 0) };
+  }));
   const counts = {};
-  countItems.forEach((item, i) => {
-    const bucket = results[i]?.aggregators?.find((a) => a.id === 'c');
-    counts[item.to] = bucket?.data?.count ?? bucket?.count ?? bucket?.value ?? 0;
-  });
+  countItems.forEach((item, i) => { counts[item.to] = results[i]?.count ?? 0; });
   return counts;
 }
 

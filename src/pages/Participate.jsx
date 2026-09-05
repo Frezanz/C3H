@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { Badge } from '@/components/ui/badge';
 
 export const route = { path: '/participate', layout: 'public', access: 'public' };
@@ -35,7 +35,7 @@ export default function Participate() {
             const active = selected === area.name;
             return (
               <button type="button" key={area.name} onClick={() => setSelected(active ? null : area.name)} className={`rounded-2xl border p-5 text-left shadow-xs transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98] ${active ? 'border-primary bg-muted' : 'border-border bg-card'}`}>
-                <div className="flex items-center justify-between gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name={area.icon} size={19} /></div>{active && <Badge>Selected</Badge>}</div>
+                <div className="flex items-center justify-between gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-primary"><Icon name={area.icon} size={19} /></div>{active && <Badge>Selected</Badge>}</div>
                 <div className="mt-4 text-sm font-medium">{area.name}</div>
                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{area.text}</p>
               </button>
@@ -45,12 +45,12 @@ export default function Participate() {
       </section>
 
       <section className="rounded-2xl border border-border bg-card p-5 shadow-xs sm:p-6">
-        <div className="flex items-start gap-3"><ApperIcon name="UsersRound" size={20} /><div><h2 className="text-base font-heading font-semibold">Your role can change by group.</h2><p className="mt-1 text-sm leading-relaxed text-muted-foreground">For example, you could be a Researcher in one project and a Contributor or Coordinator in another.</p></div></div>
+        <div className="flex items-start gap-3"><Icon name="UsersRound" size={20} /><div><h2 className="text-base font-heading font-semibold">Your role can change by group.</h2><p className="mt-1 text-sm leading-relaxed text-muted-foreground">For example, you could be a Researcher in one project and a Contributor or Coordinator in another.</p></div></div>
         <div className="mt-5 flex flex-wrap gap-2">{ROLES.map((role) => <Badge key={role} variant="outline">{role}</Badge>)}</div>
       </section>
 
       <div className="rounded-2xl bg-primary p-6 text-primary-foreground shadow-lg sm:p-8">
-        <div className="max-w-2xl"><div className="text-xs font-medium uppercase tracking-wide opacity-75">Next step</div><h2 className="mt-2 text-2xl font-heading font-semibold">Ready to participate?</h2><p className="mt-2 text-sm leading-relaxed opacity-85">Sign in to keep your identity and future group roles attached to one account.</p><Link to="/login" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]"><ApperIcon name="LogIn" size={16} /> Sign in</Link></div>
+        <div className="max-w-2xl"><div className="text-xs font-medium uppercase tracking-wide opacity-75">Next step</div><h2 className="mt-2 text-2xl font-heading font-semibold">Ready to participate?</h2><p className="mt-2 text-sm leading-relaxed opacity-85">Sign in to keep your identity and future group roles attached to one account.</p><Link to="/login" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]"><Icon name="LogIn" size={16} /> Sign in</Link></div>
       </div>
     </div>
   );

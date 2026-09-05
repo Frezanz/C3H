@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 
 export default function CommentComposer({ onPublicSubmit, onPrivateSubmit, disabled = false }) {
   const [mode, setMode] = useState('public');
@@ -31,10 +31,10 @@ export default function CommentComposer({ onPublicSubmit, onPrivateSubmit, disab
     <div className="mt-4 rounded-2xl border border-border bg-card p-3">
       <div className="flex flex-wrap gap-1 rounded-xl bg-muted p-1">
         <button type="button" onClick={() => { setMode('public'); setStatus(''); }} className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${mode === 'public' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}>
-          <ApperIcon name="MessageCircle" size={14} /> Public comment
+          <Icon name="MessageCircle" size={14} /> Public comment
         </button>
         <button type="button" onClick={() => { setMode('private'); setStatus(''); }} className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${mode === 'private' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'}`}>
-          <ApperIcon name="Mail" size={14} /> Private response
+          <Icon name="Mail" size={14} /> Private response
         </button>
       </div>
       <div className="mt-3 flex gap-2">

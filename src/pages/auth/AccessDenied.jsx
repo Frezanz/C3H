@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/layouts/RootLayout';
 import { APP_CONFIG, AUTH_PROFILES } from '@/config/app.config';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import AuthLayout from './AuthLayout';
 
 export default function AccessDenied() {
@@ -34,7 +34,7 @@ export default function AccessDenied() {
         {!isAuthenticated && !AUTH_PROFILES?.length && (
           <Button asChild className="h-9">
             <Link to={APP_CONFIG.defaultLoginRoute}>
-              <ApperIcon name="LogIn" size={16} />
+              <Icon name="LogIn" size={16} />
               Sign in
             </Link>
           </Button>
@@ -42,7 +42,7 @@ export default function AccessDenied() {
         {isAuthenticated && (
           <Button asChild className="h-9">
             <Link to="/">
-              <ApperIcon name="Home" size={16} />
+              <Icon name="Home" size={16} />
               Go home
             </Link>
           </Button>

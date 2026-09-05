@@ -1,7 +1,7 @@
 import { useSearchParams, Link } from 'react-router-dom';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import AuthLayout from './AuthLayout';
 
 const ERROR_MESSAGES = {
@@ -27,7 +27,7 @@ export default function ErrorPage() {
         )}
         <div className="flex items-center justify-center gap-3 pt-1">
           <Link to="/login" className={cn(buttonVariants({ variant: 'outline' }), 'h-9 inline-flex items-center gap-1.5')}>
-            <ApperIcon name="ArrowLeft" size={16} />
+            <Icon name="ArrowLeft" size={16} />
             Back to login
           </Link>
           <Link to="/" className={cn(buttonVariants({ variant: 'ghost' }), 'h-9')}>

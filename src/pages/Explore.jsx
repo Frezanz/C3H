@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { useFunction } from '@/hooks/useFunction';
 
 export const route = { path: '/explore', layout: 'public', access: 'public' };
@@ -82,8 +82,8 @@ export default function Explore() {
 
       <section className="mt-10 rounded-[1.75rem] border border-border bg-card/60 shadow-xs">
         <button type="button" onClick={() => setMapOpen((value) => !value)} aria-expanded={mapOpen} className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left sm:px-6">
-          <span className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name="GitBranch" size={17} /></span><span><span className="block text-sm font-semibold">C3H map</span><span className="block text-xs text-muted-foreground">See how the parts connect</span></span></span>
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border"><ApperIcon name={mapOpen ? 'ChevronUp' : 'ChevronDown'} size={16} /></span>
+          <span className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="GitBranch" size={17} /></span><span><span className="block text-sm font-semibold">C3H map</span><span className="block text-xs text-muted-foreground">See how the parts connect</span></span></span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border"><Icon name={mapOpen ? 'ChevronUp' : 'ChevronDown'} size={16} /></span>
         </button>
 
         {mapOpen && (
@@ -96,19 +96,19 @@ export default function Explore() {
                   {branches.map((branch) => (
                     <div key={branch.label} className="relative rounded-2xl border border-border bg-background p-4">
                       <div className="absolute left-1/2 top-[-21px] h-5 w-px bg-border" />
-                      <div className="flex items-center gap-2 font-semibold"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><ApperIcon name={branch.icon} size={16} /></span>{branch.label}</div>
+                      <div className="flex items-center gap-2 font-semibold"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><Icon name={branch.icon} size={16} /></span>{branch.label}</div>
                       <div className="ml-4 mt-3 border-l border-border pl-4">
                         {branch.children.map((child) => child.planned ? (
                           <div key={child.label} aria-disabled="true" className="flex cursor-default items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground/70">
-                            <ApperIcon name={child.icon} size={15} />
+                            <Icon name={child.icon} size={15} />
                             <span className="flex-1">{child.label}</span>
                             <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">Coming later</span>
                           </div>
                         ) : (
                           <Link key={child.label} to={child.to} className="group flex items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground">
-                            <ApperIcon name={child.icon} size={15} className="text-primary" />
+                            <Icon name={child.icon} size={15} className="text-primary" />
                             <span className="flex-1">{child.label}</span>
-                            <ApperIcon name="ArrowUpRight" size={13} className="opacity-0 transition group-hover:opacity-100" />
+                            <Icon name="ArrowUpRight" size={13} className="opacity-0 transition group-hover:opacity-100" />
                           </Link>
                         ))}
                       </div>
@@ -139,17 +139,17 @@ export default function Explore() {
         ) : feedError ? (
           <div className="mt-5 rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">{feedError}</div>
         ) : feed.length === 0 ? (
-          <div className="mt-5 rounded-2xl border border-dashed border-border p-10 text-center"><ApperIcon name="Inbox" size={25} className="mx-auto text-muted-foreground" /><p className="mt-3 font-medium">The public feed is quiet.</p><p className="mt-1 text-sm text-muted-foreground">Published public content will appear here.</p></div>
+          <div className="mt-5 rounded-2xl border border-dashed border-border p-10 text-center"><Icon name="Inbox" size={25} className="mx-auto text-muted-foreground" /><p className="mt-3 font-medium">The public feed is quiet.</p><p className="mt-1 text-sm text-muted-foreground">Published public content will appear here.</p></div>
         ) : (
           <div className="grid gap-4 pt-5 md:grid-cols-2">
             {feed.map((item) => {
               const meta = typeMeta[item.type] || { label: item.type || 'Content', icon: 'FileText' };
               return (
                 <article key={item.id} className="rounded-2xl border border-border bg-card p-5 shadow-xs transition hover:-translate-y-0.5 hover:shadow-md">
-                  <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><ApperIcon name={meta.icon} size={15} /></span>{meta.label}<span className="mx-1">·</span>{formatDate(item.created_at)}</div>
+                  <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><Icon name={meta.icon} size={15} /></span>{meta.label}<span className="mx-1">·</span>{formatDate(item.created_at)}</div>
                   <h3 className="mt-4 font-heading text-2xl leading-tight">{item.title || meta.label}</h3>
                   <p className="mt-3 line-clamp-4 text-sm leading-6 text-muted-foreground">{item.body}</p>
-                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/70 pt-4 text-xs text-muted-foreground"><span>By {item.author_name || 'Member'}</span>{meta.to ? <Link to={meta.to} className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:text-primary">Explore <ApperIcon name="ArrowUpRight" size={14} /></Link> : <span className="text-muted-foreground">Public</span>}</div>
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/70 pt-4 text-xs text-muted-foreground"><span>By {item.author_name || 'Member'}</span>{meta.to ? <Link to={meta.to} className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:text-primary">Explore <Icon name="ArrowUpRight" size={14} /></Link> : <span className="text-muted-foreground">Public</span>}</div>
                 </article>
               );
             })}

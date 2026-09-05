@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/services/supabase';
 import { formatRelativeTime } from '@/utils/date';
@@ -41,7 +41,7 @@ export default function Announcements() {
           <h1 className="mt-2 text-3xl font-heading font-semibold tracking-tight sm:text-4xl">Announcements</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">The complete stream of published community updates.</p>
         </div>
-        <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"><ApperIcon name="ArrowLeft" size={16} /> Home</Link>
+        <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"><Icon name="ArrowLeft" size={16} /> Home</Link>
       </div>
 
       {error && <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{error}</div>}

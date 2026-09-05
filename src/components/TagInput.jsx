@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
@@ -146,7 +146,7 @@ export default function TagInput({
                 className="rounded-sm hover:text-destructive p-0.5"
                 aria-label={`Remove ${tag}`}
               >
-                <ApperIcon name="X" className="size-3" />
+                <Icon name="X" className="size-3" />
               </button>
             )}
           </Badge>
@@ -216,7 +216,7 @@ export default function TagInput({
                 filtered.length === activeIdx ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50',
               )}
             >
-              <ApperIcon name="Plus" className="size-3.5 text-muted-foreground" />
+              <Icon name="Plus" className="size-3.5 text-muted-foreground" />
               Create &ldquo;<span className="font-medium">{input.trim()}</span>&rdquo;
             </button>
           )}

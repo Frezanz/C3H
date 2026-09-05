@@ -127,5 +127,5 @@ alter table public.groups enable row level security;
 alter table public.group_members enable row level security;
 alter table public.content_access_grants enable row level security;
 
--- The Apper server bridge owns writes and access decisions with the stored Supabase server key.
+-- Supabase Edge Functions own privileged writes and access decisions with server-side credentials.
 -- No direct browser policy is granted for private content tables.

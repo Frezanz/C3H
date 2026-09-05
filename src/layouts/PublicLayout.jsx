@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { APP_CONFIG } from '@/config/app.config';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import ThemeToggle from '@/components/ThemeToggle';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
 import { getProfileMeta } from '@/services/userPermissions';
@@ -47,7 +47,7 @@ export default function PublicLayout() {
           <Link to={home} className="group flex min-w-0 items-center gap-3 rounded-2xl px-1.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md transition duration-(--transition-fast) group-hover:scale-[1.03]">
               <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-primary-foreground/15" />
-              <ApperIcon name={APP_CONFIG.icon} size={18} />
+              <Icon name={APP_CONFIG.icon} size={18} />
             </div>
             <div className="min-w-0">
               <div className="font-heading text-lg font-semibold leading-none tracking-tight">C3H</div>
@@ -58,7 +58,7 @@ export default function PublicLayout() {
           <div className="flex items-center gap-2">
             {user?.Id && <Link to="/profile" className="hidden items-center rounded-full border border-border bg-card p-1 shadow-xs transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex"><Avatar className="size-8"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar></Link>}
             {!user?.Id && <Link to="/login" className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">Sign in</Link>}
-            <button type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-xs transition duration-(--transition-fast) hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><ApperIcon name={menuOpen ? 'X' : 'Menu'} size={19} /></button>
+            <button type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-xs transition duration-(--transition-fast) hover:bg-accent hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><Icon name={menuOpen ? 'X' : 'Menu'} size={19} /></button>
           </div>
         </div>
       </header>
@@ -69,20 +69,20 @@ export default function PublicLayout() {
           <aside className="fixed right-0 top-0 z-[calc(var(--z-sticky)+2)] flex h-dvh w-[min(50vw,380px)] max-w-[50vw] flex-col border-l border-border bg-background shadow-2xl max-sm:w-[88vw] max-sm:max-w-[88vw]" aria-label="C3H menu">
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 px-4 sm:px-5">
               <div><div className="font-heading text-base font-semibold">C3H</div><div className="text-xs text-muted-foreground">Menu</div></div>
-              <button type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><ApperIcon name="X" size={17} /></button>
+              <button type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><Icon name="X" size={17} /></button>
             </div>
             <div className="flex-1 overflow-y-auto px-3 py-5 sm:px-4">
               <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Explore</div>
               <nav className="space-y-1" aria-label="C3H navigation">
-                {navigation.map((item) => <NavLink key={item.to} to={item.to} className={navClass}><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary transition group-hover:bg-background"><ApperIcon name={item.icon} size={17} /></span><span className="min-w-0 flex-1"><span className="block">{item.label}</span><span className="mt-0.5 block text-xs font-normal text-muted-foreground">{item.description}</span></span><ApperIcon name="ChevronRight" size={15} className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" /></NavLink>)}
+                {navigation.map((item) => <NavLink key={item.to} to={item.to} className={navClass}><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary transition group-hover:bg-background"><Icon name={item.icon} size={17} /></span><span className="min-w-0 flex-1"><span className="block">{item.label}</span><span className="mt-0.5 block text-xs font-normal text-muted-foreground">{item.description}</span></span><Icon name="ChevronRight" size={15} className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" /></NavLink>)}
               </nav>
               <div className="my-5 border-t border-border" />
               <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Account</div>
               {user?.Id ? <nav className="space-y-1" aria-label="Account navigation">
-                <NavLink to="/dashboard" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name="LayoutDashboard" size={17} /></span><span className="flex-1">Dashboard</span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
-                <NavLink to="/messages" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><ApperIcon name="Bell" size={17} /></span><span className="flex-1">Messages</span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
-                <NavLink to="/profile" className={navClass}><Avatar className="size-9"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar><span className="min-w-0 flex-1"><span className="block truncate">{displayName}</span><span className="block text-xs font-normal text-muted-foreground">{profileMeta?.label ?? 'Member'}</span></span><ApperIcon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
-              </nav> : <Link to="/login" className="flex items-center gap-3 rounded-2xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/10"><ApperIcon name="LogIn" size={17} /></span><span className="flex-1">Sign in</span><ApperIcon name="ArrowUpRight" size={16} /></Link>}
+                <NavLink to="/dashboard" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="LayoutDashboard" size={17} /></span><span className="flex-1">Dashboard</span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
+                <NavLink to="/messages" className={navClass}><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-primary"><Icon name="Bell" size={17} /></span><span className="flex-1">Messages</span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
+                <NavLink to="/profile" className={navClass}><Avatar className="size-9"><AvatarFallback className="bg-primary text-xs text-primary-foreground">{initials}</AvatarFallback></Avatar><span className="min-w-0 flex-1"><span className="block truncate">{displayName}</span><span className="block text-xs font-normal text-muted-foreground">{profileMeta?.label ?? 'Member'}</span></span><Icon name="ChevronRight" size={15} className="text-muted-foreground" /></NavLink>
+              </nav> : <Link to="/login" className="flex items-center gap-3 rounded-2xl bg-primary px-3 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99]"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/10"><Icon name="LogIn" size={17} /></span><span className="flex-1">Sign in</span><Icon name="ArrowUpRight" size={16} /></Link>}
             </div>
             <div className="shrink-0 border-t border-border/70 px-4 py-4 sm:px-5">
               <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Appearance</div>

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useMemo, useCallback, useId } from 'react';
 import { useFetch } from '@/hooks/useFetch';
-import { sdk } from '@/services/sdk';
+import { supabase } from '@/services/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +19,7 @@ function getUserId(person) {
  *
  * The picker's own value is `[{ User: { Id, Name } }]` because it needs `Name` to render avatars and
  * badges — but the data API REJECTS that nested object on a write and wants a bare id. Call this on
- * every People field at submit time (the same way Files goes through `sdk.storage.toCreateFormat`).
+ * every People field at submit time (the same way Files goes through `toPeopleWrite`).
  *
  * User ids are UUID strings on migrated backends, integers on legacy ones. Digit-only strings are
  * coerced to Number because legacy int backends reject `{ User: "2" }`; UUID strings pass through
@@ -76,16 +76,21 @@ export default function PeoplePicker({
   const selected = Array.isArray(value) ? value : [];
 
   const { data: users = [] } = useFetch(
-    () => sdk.admin.fetch('user', {
-      pagingInfo: { limit: PAGE_SIZE, offset: 0 },
-      fields: [
-        { field: { Name: 'FirstName' } },
-        { field: { Name: 'LastName' } },
-        { field: { Name: 'Email' } },
-        { field: { Name: 'Name' } },
-        { field: { Name: 'AvatarUrl' } },
-      ],
-    }).then(r => r.data ?? []),
+    async () => {
+      if (!supabase) return [];
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('user_key,email,display_name,avatar_path')
+        .order('display_name', { ascending: true })
+        .limit(PAGE_SIZE);
+      if (error) throw error;
+      return (data || []).map((profile) => ({
+        Id: profile.user_key,
+        Email: profile.email,
+        Name: profile.display_name,
+        AvatarUrl: profile.avatar_path,
+      }));
+    },
     { initialLoading: true }
   );
 
@@ -215,7 +220,7 @@ export default function PeoplePicker({
                 <p className="text-sm truncate">{getUserLabel(user)}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.Email}</p>
               </div>
-              {checked && <ApperIcon name="Check" size={15} className="text-primary shrink-0" />}
+              {checked && <Icon name="Check" size={15} className="text-primary shrink-0" />}
             </div>
           );
         })
@@ -239,7 +244,7 @@ export default function PeoplePicker({
                   className="rounded-sm hover:text-destructive"
                   aria-label={`Remove ${person.User?.Name}`}
                 >
-                  <ApperIcon name="X" className="size-3" />
+                  <Icon name="X" className="size-3" />
                 </button>
               )}
             </Badge>
@@ -268,7 +273,7 @@ export default function PeoplePicker({
         <span className="text-muted-foreground truncate">
           {selected.length ? `${selected.length} selected` : placeholder}
         </span>
-        <ApperIcon name="ChevronsUpDown" size={15} className="ml-auto text-muted-foreground shrink-0" />
+        <Icon name="ChevronsUpDown" size={15} className="ml-auto text-muted-foreground shrink-0" />
       </button>
 
       {/* Mobile bottom sheet */}
@@ -282,7 +287,7 @@ export default function PeoplePicker({
             <div className="px-4 pb-2 flex items-center justify-between">
               <span className="text-sm font-medium text-foreground">{ariaLabel ?? placeholder}</span>
               <button type="button" onClick={closeDropdown} className="rounded-full p-1.5 hover:bg-muted transition-colors" aria-label="Close">
-                <ApperIcon name="X" size={18} className="text-muted-foreground" />
+                <Icon name="X" size={18} className="text-muted-foreground" />
               </button>
             </div>
             <div className="px-3 pb-2">

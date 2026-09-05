@@ -4,7 +4,7 @@ import { signIn, signUp } from '@/services/auth';
 import { setUser } from '@/store/userSlice';
 import { useDispatch } from 'react-redux';
 import { AUTH_PROFILES, GENERIC_AUTH } from '@/config/app.config';
-import ApperIcon from '@/components/ApperIcon';
+import Icon from '@/components/Icon';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -96,7 +96,7 @@ export default function AuthPage({ mode }) {
           <div className="relative">
             <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={mode === 'login' ? 'current-password' : 'new-password'} className="h-9 pr-10" />
             <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" tabIndex={-1} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-              <ApperIcon name={showPassword ? 'EyeOff' : 'Eye'} size={16} />
+              <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={16} />
             </button>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function AuthPage({ mode }) {
             <div className="relative">
               <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required autoComplete="new-password" className="h-9 pr-10" />
               <button type="button" onClick={() => setShowConfirmPassword((v) => !v)} className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground" tabIndex={-1} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
-                <ApperIcon name={showConfirmPassword ? 'EyeOff' : 'Eye'} size={16} />
+                <Icon name={showConfirmPassword ? 'EyeOff' : 'Eye'} size={16} />
               </button>
             </div>
           </div>
@@ -126,7 +126,7 @@ function AuthFooter({ mode, profilePrefix, altLinksLeadIn, altLinks }) {
       <p className="text-[13px] text-center text-muted-foreground">
         {mode === 'login' ? <>Don&apos;t have an account? <Link to={`${base}/signup`} className="text-primary font-medium hover:underline">Sign up</Link></> : <>Already have an account? <Link to={`${base}/login`} className="text-primary font-medium hover:underline">Sign in</Link></>}
       </p>
-      {altLinks?.length > 0 && <div className="flex flex-col gap-2">{altLinks.map((link) => <Link key={link.href} to={link.href} className="group flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 px-4 py-3"><div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"><ApperIcon name="UserRound" size={16} /></div><div className="flex-1 min-w-0"><p className="text-sm font-medium">{link.label}</p>{altLinksLeadIn && <p className="text-xs text-muted-foreground truncate">{altLinksLeadIn}</p>}</div><ApperIcon name="ChevronRight" size={16} /></Link>)}</div>}
+      {altLinks?.length > 0 && <div className="flex flex-col gap-2">{altLinks.map((link) => <Link key={link.href} to={link.href} className="group flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 px-4 py-3"><div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"><Icon name="UserRound" size={16} /></div><div className="flex-1 min-w-0"><p className="text-sm font-medium">{link.label}</p>{altLinksLeadIn && <p className="text-xs text-muted-foreground truncate">{altLinksLeadIn}</p>}</div><Icon name="ChevronRight" size={16} /></Link>)}</div>}
     </div>
   );
 }
