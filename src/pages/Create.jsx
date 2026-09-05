@@ -14,26 +14,27 @@ const OPTIONS = [
 ];
 
 const FIELD_COPY = {
-  post: { title: 'Create a post', prompt: 'What do you want to share?' },
-  announcement: { title: 'Create an announcement', prompt: 'Write the announcement' },
-  group: { title: 'Create a group', prompt: 'Describe what this group exists to do' },
-  project: { title: 'Create a project', prompt: 'Describe what this project aims to achieve' },
-  research: { title: 'Create research', prompt: 'Describe the research, study or finding' },
-  report: { title: 'Create a report', prompt: 'Describe the issue, observation or evidence' },
+  post: { label: 'Post', title: 'Create a post', prompt: 'What do you want to share?' },
+  announcement: { label: 'Announcement', title: 'Create an announcement', prompt: 'Write the announcement' },
+  group: { label: 'Group', title: 'Create a group', prompt: 'Describe what this group exists to do' },
+  project: { label: 'Project', title: 'Create a project', prompt: 'Describe what this project aims to achieve' },
+  research: { label: 'Research', title: 'Create research', prompt: 'Describe the research, study or finding' },
+  report: { label: 'Report', title: 'Create a report', prompt: 'Describe the issue, observation or evidence' },
 };
 
 export default function Create() {
   const location = useLocation();
   const initialType = useMemo(() => {
-    const type = new URLSearchParams(location.search).get('type');
-    return OPTIONS.some((option) => option.key === type) ? type : 'post';
+    const requestedType = new URLSearchParams(location.search || '').get('type');
+    return OPTIONS.some((option) => option.key === requestedType) ? requestedType : 'post';
   }, [location.search]);
   const [type, setType] = useState(initialType);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const active = FIELD_COPY[type];
+  const active = FIELD_COPY[type] ?? FIELD_COPY.post;
 
   const selectType = (nextType) => {
+    if (!FIELD_COPY[nextType]) return;
     setType(nextType);
     setTitle('');
     setBody('');
@@ -58,15 +59,8 @@ export default function Create() {
             {OPTIONS.map((option) => {
               const selected = type === option.key;
               return (
-                <button
-                  type="button"
-                  key={option.key}
-                  onClick={() => selectType(option.key)}
-                  className={`group flex items-center gap-3 rounded-xl px-3 py-3 text-left transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99] ${selected ? 'bg-muted text-foreground shadow-xs' : 'text-foreground'}`}
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary group-hover:bg-background">
-                    <ApperIcon name={option.icon} size={17} />
-                  </span>
+                <button type="button" key={option.key} onClick={() => selectType(option.key)} className={`group flex items-center gap-3 rounded-xl px-3 py-3 text-left transition duration-(--transition-fast) hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.99] ${selected ? 'bg-muted text-foreground shadow-xs' : 'text-foreground'}`}>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-primary group-hover:bg-background"><ApperIcon name={option.icon} size={17} /></span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-medium">{option.label}</span>
                     <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{option.description}</span>
@@ -87,24 +81,13 @@ export default function Create() {
             {type !== 'post' && (
               <label className="block space-y-2">
                 <span className="text-sm font-medium">Title</span>
-                <input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder={`Give your ${active.label.toLowerCase()} a clear title`}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                />
+                <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={`Give your ${active.label.toLowerCase()} a clear title`} className="w-full rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
               </label>
             )}
 
             <label className="block space-y-2">
               <span className="text-sm font-medium">{active.prompt}</span>
-              <textarea
-                value={body}
-                onChange={(event) => setBody(event.target.value)}
-                rows={type === 'post' ? 10 : 12}
-                placeholder={type === 'post' ? 'Write freely. You can refine the structure later.' : 'Add the details people need to understand it.'}
-                className="min-h-48 w-full resize-y rounded-xl border border-input bg-background px-3 py-3 text-sm leading-6 outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-              />
+              <textarea value={body} onChange={(event) => setBody(event.target.value)} rows={type === 'post' ? 10 : 12} placeholder={type === 'post' ? 'Write freely. You can refine the structure later.' : 'Add the details people need to understand it.'} className="min-h-48 w-full resize-y rounded-xl border border-input bg-background px-3 py-3 text-sm leading-6 outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
             </label>
 
             <div className="flex flex-wrap gap-2">
