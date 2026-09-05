@@ -7,7 +7,6 @@
 create extension if not exists pgcrypto;
 
 -- Bootstrap the two public base content tables if schema.sql has not been run yet.
--- When schema.sql has already created them, these statements are no-ops.
 create table if not exists public.questions (
   id uuid primary key default gen_random_uuid(),
   title text not null default 'Question',
@@ -67,6 +66,23 @@ create table if not exists public.content_people (
   primary key (content_id, user_key)
 );
 
+create table if not exists public.content_tags (
+  content_id uuid not null references public.content_items(id) on delete cascade,
+  tag text not null check (char_length(trim(tag)) between 1 and 80),
+  created_at timestamptz not null default now(),
+  primary key (content_id, tag)
+);
+
+create table if not exists public.content_attachments (
+  id uuid primary key default gen_random_uuid(),
+  content_id uuid not null references public.content_items(id) on delete cascade,
+  storage_path text not null,
+  file_name text not null,
+  mime_type text,
+  size_bytes bigint,
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.groups (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -97,12 +113,16 @@ create index if not exists answers_question_idx on public.answers(question_id, a
 create index if not exists content_type_idx on public.content_items(type, published, created_at desc);
 create index if not exists content_author_idx on public.content_items(author_key, created_at desc);
 create index if not exists content_people_user_idx on public.content_people(user_key, content_id);
+create index if not exists content_tags_tag_idx on public.content_tags(tag, content_id);
+create index if not exists content_attachments_content_idx on public.content_attachments(content_id, created_at);
 create index if not exists group_members_user_idx on public.group_members(user_key, group_id);
 create index if not exists content_grants_lookup_idx on public.content_access_grants(content_id, user_key, expires_at);
 
 alter table public.answers enable row level security;
 alter table public.content_items enable row level security;
 alter table public.content_people enable row level security;
+alter table public.content_tags enable row level security;
+alter table public.content_attachments enable row level security;
 alter table public.groups enable row level security;
 alter table public.group_members enable row level security;
 alter table public.content_access_grants enable row level security;
