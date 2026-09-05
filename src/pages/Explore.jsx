@@ -99,10 +99,10 @@ export default function Explore() {
                       <div className="flex items-center gap-2 font-semibold"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><ApperIcon name={branch.icon} size={16} /></span>{branch.label}</div>
                       <div className="ml-4 mt-3 border-l border-border pl-4">
                         {branch.children.map((child) => child.planned ? (
-                          <div key={child.label} className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground/70">
+                          <div key={child.label} aria-disabled="true" className="flex cursor-default items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground/70">
                             <ApperIcon name={child.icon} size={15} />
                             <span className="flex-1">{child.label}</span>
-                            <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">Planned</span>
+                            <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">Coming later</span>
                           </div>
                         ) : (
                           <Link key={child.label} to={child.to} className="group flex items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground">
@@ -117,6 +117,10 @@ export default function Explore() {
                 </div>
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
                   <span>Question</span><span>→</span><span>Knowledge</span><span>→</span><span>People</span><span>→</span><span>Group</span><span>→</span><span>Project</span><span>→</span><span>Research</span><span>→</span><span>Action</span>
+                </div>
+                <div className="mt-3 flex items-center gap-3 text-[11px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-primary" />Available</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40" />Coming later</span>
                 </div>
               </div>
             </div>
