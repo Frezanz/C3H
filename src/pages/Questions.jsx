@@ -2,19 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ApperIcon from '@/components/ApperIcon';
+import CommentComposer from '@/components/CommentComposer';
 import { useFunction } from '@/hooks/useFunction';
 
 export const route = { path: '/questions', layout: 'public', access: 'public' };
 export const nav = { icon: 'CircleHelp', label: 'Questions', section: 'Explore', profiles: null, order: 10 };
 
-const fallbackGroups = [];
-
 export default function Questions() {
   const user = useSelector((state) => state.user.user);
   const { invoke, loading } = useFunction(import.meta.env.VITE_SUPABASE_COMMUNITY_API, { showError: false });
+  const { invoke: sendPrivateResponse } = useFunction(import.meta.env.VITE_CREATOR_RESPONSE, { showError: false });
   const [questions, setQuestions] = useState([]);
   const [comments, setComments] = useState({});
-  const [drafts, setDrafts] = useState({});
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
 
@@ -44,15 +43,16 @@ export default function Questions() {
     if (result?.success) setComments((current) => ({ ...current, [questionId]: result.data || [] }));
   };
 
-  const addComment = async (questionId) => {
-    if (!user?.Id) return;
-    const body = (drafts[questionId] || '').trim();
-    if (!body) return;
+  const addPublicComment = async (questionId, body) => {
+    if (!user?.Id) return { success: false, error: 'Sign in to comment.' };
     const result = await invoke({ action: 'create_comment', question_id: questionId, body });
-    if (result?.success) {
-      setDrafts((current) => ({ ...current, [questionId]: '' }));
-      await loadComments(questionId);
-    }
+    if (result?.success) await loadComments(questionId);
+    return result;
+  };
+
+  const sendPrivate = async (questionId, body) => {
+    if (!user?.Id) return { success: false, error: 'Sign in to respond privately.' };
+    return await sendPrivateResponse({ content_type: 'question', content_id: questionId, body });
   };
 
   const editComment = async (questionId, comment) => {
@@ -73,7 +73,7 @@ export default function Questions() {
       <div className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Question bank</div>
       <h1 className="mt-2 font-heading text-5xl leading-none sm:text-6xl">Questions worth answering before the crisis.</h1>
       <p className="mt-5 text-lg leading-8 text-muted-foreground">Real questions, stored in the community database. Search them, open the discussion, and add your perspective.</p>
-      <div className="mt-6 relative">
+      <div className="relative mt-6">
         <ApperIcon name="Search" size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search questions..." className="w-full rounded-2xl border border-border bg-card py-3 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
       </div>
@@ -89,7 +89,7 @@ export default function Questions() {
           <div className="flex items-start gap-3"><span className="font-semibold text-primary">{i + 1}.</span><div className="min-w-0 flex-1"><div className="font-semibold leading-6">{q.title || q.body}</div><div className="mt-3 flex flex-wrap gap-2"><button type="button" onClick={() => loadComments(q.id)} className="inline-flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted"><ApperIcon name="MessageCircle" size={14} /> Discussion</button></div></div></div>
           {comments[q.id] && <div className="mt-4 border-t border-border pt-4">
             <div className="space-y-3">{comments[q.id].map((comment) => <div key={comment.id} className="rounded-xl bg-muted/70 p-3"><div className="flex items-center justify-between gap-3"><div className="text-xs font-semibold">{comment.author_name}</div>{comment.author_key === String(user?.Id) && <div className="flex gap-1"><button type="button" onClick={() => editComment(q.id, comment)} className="rounded-lg p-1.5 hover:bg-background" aria-label="Edit comment"><ApperIcon name="Pencil" size={14} /></button><button type="button" onClick={() => deleteComment(q.id, comment.id)} className="rounded-lg p-1.5 hover:bg-background" aria-label="Delete comment"><ApperIcon name="Trash2" size={14} /></button></div>}</div><div className="mt-1 text-sm leading-6">{comment.body}</div></div>)}</div>
-            {user?.Id ? <div className="mt-4 flex gap-2"><input value={drafts[q.id] || ''} onChange={(e) => setDrafts((current) => ({ ...current, [q.id]: e.target.value }))} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addComment(q.id); } }} placeholder="Add your perspective…" className="min-w-0 flex-1 rounded-xl border border-border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring" /><button type="button" onClick={() => addComment(q.id)} className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Post</button></div> : <div className="mt-4 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground">Sign in to join the discussion.</div>}
+            {user?.Id ? <CommentComposer onPublicSubmit={(body) => addPublicComment(q.id, body)} onPrivateSubmit={(body) => sendPrivate(q.id, body)} /> : <div className="mt-4 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground">Sign in to join the discussion or send a private response.</div>}
           </div>}
         </article>)}</div>
       </section>)}
