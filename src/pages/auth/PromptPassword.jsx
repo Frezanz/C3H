@@ -1,13 +1,7 @@
-import ProviderAuthPage from './ProviderAuthPage';
-import { sdk } from '@/services/sdk';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import AuthLayout from './AuthLayout';
 
 export default function PromptPassword() {
-  return (
-    <ProviderAuthPage
-      title="Set a Password"
-      description="Create a password to use alongside your social login"
-      targetId="prompt-target"
-      mount={(t) => sdk.session.ui?.showPromptPassword?.(t)}
-    />
-  );
+  return <AuthLayout title="Set a password" icon="Lock" description="Create or change your password from your account settings."><Button asChild className="w-full"><Link to="/change-password">Change password</Link></Button></AuthLayout>;
 }
