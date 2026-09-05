@@ -96,7 +96,7 @@ export default function PublicLayout() {
       {menuOpen && (
         <>
           <button type="button" aria-label="Close menu overlay" onClick={() => setMenuOpen(false)} className="fixed inset-0 z-[calc(var(--z-sticky)+1)] cursor-default bg-background/60 backdrop-blur-[2px]" />
-          <aside className="fixed right-0 top-0 z-[calc(var(--z-sticky)+2)] flex h-dvh w-[min(50vw,380px)] min-w-[280px] max-w-[50vw] flex-col border-l border-border bg-background shadow-2xl" aria-label="C3H menu">
+          <aside className="fixed right-0 top-0 z-[calc(var(--z-sticky)+2)] flex h-dvh w-[min(50vw,380px)] max-w-[50vw] flex-col border-l border-border bg-background shadow-2xl max-sm:w-[88vw] max-sm:max-w-[88vw]" aria-label="C3H menu">
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 px-4 sm:px-5">
               <div><div className="font-heading text-base font-semibold">C3H</div><div className="text-xs text-muted-foreground">Menu</div></div>
               <button type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.94]"><ApperIcon name="X" size={17} /></button>
@@ -125,18 +125,11 @@ export default function PublicLayout() {
       <main>
         <ErrorBoundary>
           {isFrontDoor ? (
-            <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-5 py-16 sm:px-8">
-              <div className="w-full max-w-3xl text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.35rem] bg-primary text-primary-foreground shadow-xl ring-1 ring-primary-foreground/10"><ApperIcon name={APP_CONFIG.icon} size={27} /></div>
-                <h1 className="mt-7 font-heading text-5xl font-semibold tracking-[-0.04em] sm:text-6xl lg:text-7xl">C3H</h1>
-                <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">Let's be free, open and powerful.</p>
-                <p className="mx-auto mt-10 max-w-lg text-sm leading-7 text-muted-foreground/80">A space for questions, preparedness, participation and collective capability.</p>
-                <button type="button" onClick={() => setMenuOpen(true)} className="mt-9 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold shadow-xs transition hover:-translate-y-0.5 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:translate-y-0">Explore C3H <ApperIcon name="ArrowRight" size={16} /></button>
-              </div>
-
+            <div className="relative min-h-[calc(100vh-4rem)]">
+              <Outlet />
               {latestUpdate && !updateDismissed && (
-                <div className="absolute inset-x-4 bottom-5 z-10 mx-auto w-[min(92vw,620px)] sm:bottom-7">
-                  <article className="relative max-h-[42vh] overflow-hidden rounded-[1.5rem] border border-border bg-card/95 p-5 text-left shadow-2xl backdrop-blur-xl sm:p-6">
+                <div className="pointer-events-none fixed inset-x-4 bottom-5 z-10 mx-auto w-[min(92vw,620px)] sm:bottom-7">
+                  <article className="pointer-events-auto relative max-h-[42vh] overflow-hidden rounded-[1.5rem] border border-border bg-card/95 p-5 text-left shadow-2xl backdrop-blur-xl sm:p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0"><div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Latest update</div><h2 className="mt-1 font-heading text-xl font-semibold leading-tight sm:text-2xl">{latestUpdate.title}</h2></div>
                       <button type="button" aria-label="Dismiss update" onClick={() => setUpdateDismissed(true)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name="X" size={17} /></button>
@@ -146,9 +139,8 @@ export default function PublicLayout() {
                   </article>
                 </div>
               )}
-
               {(!latestUpdate || updateDismissed) && (
-                <div className="absolute bottom-6 right-5 z-20 sm:bottom-8 sm:right-8">
+                <div className="fixed bottom-6 right-5 z-20 sm:bottom-8 sm:right-8">
                   <div className="relative">
                     {createOpen && <div className="absolute bottom-14 right-0 mb-2 w-[min(86vw,320px)] overflow-hidden rounded-2xl border border-border bg-card p-2 text-left shadow-2xl backdrop-blur-xl">
                       <div className="px-3 py-2"><div className="text-sm font-semibold">Create</div><div className="text-xs text-muted-foreground">Add something to C3H</div></div>
@@ -158,7 +150,7 @@ export default function PublicLayout() {
                   </div>
                 </div>
               )}
-            </section>
+            </div>
           ) : <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8"><Outlet /></div>}
         </ErrorBoundary>
       </main>
