@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { APP_CONFIG } from '@/config/app.config';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
@@ -22,31 +22,22 @@ export default function PublicLayout() {
               <div className="hidden text-xs text-muted-foreground sm:block">Community awareness</div>
             </div>
           </Link>
-
           <nav className="hidden items-center gap-1 md:flex">
             <NavLink to="/questions" className={({isActive}) => `rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground'}`}>Questions</NavLink>
             <NavLink to="/preparedness" className={({isActive}) => `rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground'}`}>Preparedness</NavLink>
             <NavLink to="/principles" className={({isActive}) => `rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-muted-foreground'}`}>Principles</NavLink>
           </nav>
-
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link to={user?.Id ? '/' : '/login'} className="hidden rounded-xl border border-border bg-card px-3 py-2 text-sm font-semibold shadow-xs transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">
-              {user?.Id ? 'Open workspace' : 'Sign in'}
-            </Link>
+            <Link to={user?.Id ? '/' : '/login'} className="hidden rounded-xl border border-border bg-card px-3 py-2 text-sm font-semibold shadow-xs transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex">{user?.Id ? 'Open workspace' : 'Sign in'}</Link>
           </div>
         </div>
       </header>
       <main>
         <ErrorBoundary>
-          <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8"><OutletShim /></div>
+          <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8"><Outlet /></div>
         </ErrorBoundary>
       </main>
     </div>
   );
-}
-
-function OutletShim() {
-  const { Outlet } = require('react-router-dom');
-  return <Outlet />;
 }

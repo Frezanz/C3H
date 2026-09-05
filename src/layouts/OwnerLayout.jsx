@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import { useOwnerLayoutData } from '@/hooks/useOwnerLayoutData';
 import UserMenu from '@/components/UserMenu';
@@ -6,10 +6,9 @@ import ApperIcon from '@/components/ApperIcon';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 export default function OwnerLayout() {
-  const { user, logout, homeRoute, navItems, navGroups, footerPages, initials, displayName, counts } = useOwnerLayoutData();
+  const { user, logout, homeRoute, navItems, navGroups, initials, displayName, counts } = useOwnerLayoutData();
   const [open, setOpen] = useState(false);
   const groupedNav = navGroups.length > 0 ? navGroups : [{ label: null, items: navItems }];
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col lg:flex-row">
@@ -26,21 +25,15 @@ export default function OwnerLayout() {
           </nav>
           <div className="mt-auto"><UserMenu user={user} initials={initials} displayName={displayName} logout={logout} /></div>
         </aside>
-
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <div className="sticky top-0 z-[var(--z-sticky)] flex h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur sm:px-6 lg:hidden">
             <Link to={homeRoute} className="font-heading text-lg">Community</Link>
             <button type="button" aria-label="Toggle navigation" onClick={() => setOpen(v => !v)} className="rounded-xl border border-border bg-card p-2 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ApperIcon name={open ? 'X' : 'Menu'} size={18} /></button>
           </div>
           {open && <div className="border-b border-border bg-sidebar p-4 lg:hidden"><nav className="space-y-2">{navItems.map(item => <NavLink key={item.to} to={item.to} onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"><ApperIcon name={item.icon} size={17} />{item.label}</NavLink>)}</nav></div>}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8"><ErrorBoundary><OutletShim /></ErrorBoundary></main>
+          <main className="flex-1 p-4 sm:p-6 lg:p-8"><ErrorBoundary><Outlet /></ErrorBoundary></main>
         </div>
       </div>
     </div>
   );
-}
-
-function OutletShim() {
-  const { Outlet } = require('react-router-dom');
-  return <Outlet />;
 }
