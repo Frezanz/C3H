@@ -10,32 +10,33 @@ const branches = [
     label: 'Knowledge', icon: 'BookOpen', children: [
       { label: 'Questions', to: '/questions', icon: 'CircleHelp' },
       { label: 'Preparedness', to: '/preparedness', icon: 'ShieldCheck' },
-      { label: 'Research', to: '/research', icon: 'Search' },
+      { label: 'Research', icon: 'Search', planned: true },
     ],
   },
   {
     label: 'Community', icon: 'Users', children: [
       { label: 'Participate', to: '/participate', icon: 'Network' },
-      { label: 'Groups', to: '/groups', icon: 'Users' },
-      { label: 'Members', to: '/members', icon: 'UserRound' },
+      { label: 'Announcements', to: '/announcements', icon: 'Megaphone' },
+      { label: 'Groups', icon: 'Users', planned: true },
+      { label: 'Members', icon: 'UserRound', planned: true },
     ],
   },
   {
     label: 'Action', icon: 'Workflow', children: [
-      { label: 'Projects', to: '/projects', icon: 'FolderKanban' },
-      { label: 'Reports', to: '/reports', icon: 'FileBarChart' },
+      { label: 'Projects', icon: 'FolderKanban', planned: true },
+      { label: 'Reports', icon: 'FileBarChart', planned: true },
     ],
   },
 ];
 
 const typeMeta = {
   question: { label: 'Question', icon: 'CircleHelp', to: '/questions' },
-  post: { label: 'Post', icon: 'PenLine', to: '/posts' },
+  post: { label: 'Post', icon: 'PenLine' },
   announcement: { label: 'Announcement', icon: 'Megaphone', to: '/announcements' },
-  group: { label: 'Group', icon: 'Users', to: '/groups' },
-  project: { label: 'Project', icon: 'FolderKanban', to: '/projects' },
-  research: { label: 'Research', icon: 'BookOpen', to: '/research' },
-  report: { label: 'Report', icon: 'FileBarChart', to: '/reports' },
+  group: { label: 'Group', icon: 'Users' },
+  project: { label: 'Project', icon: 'FolderKanban' },
+  research: { label: 'Research', icon: 'BookOpen' },
+  report: { label: 'Report', icon: 'FileBarChart' },
 };
 
 function formatDate(value) {
@@ -97,7 +98,13 @@ export default function Explore() {
                       <div className="absolute left-1/2 top-[-21px] h-5 w-px bg-border" />
                       <div className="flex items-center gap-2 font-semibold"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><ApperIcon name={branch.icon} size={16} /></span>{branch.label}</div>
                       <div className="ml-4 mt-3 border-l border-border pl-4">
-                        {branch.children.map((child) => (
+                        {branch.children.map((child) => child.planned ? (
+                          <div key={child.label} className="flex items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground/70">
+                            <ApperIcon name={child.icon} size={15} />
+                            <span className="flex-1">{child.label}</span>
+                            <span className="rounded-full border border-border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">Planned</span>
+                          </div>
+                        ) : (
                           <Link key={child.label} to={child.to} className="group flex items-center gap-2 rounded-xl px-2 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground">
                             <ApperIcon name={child.icon} size={15} className="text-primary" />
                             <span className="flex-1">{child.label}</span>
@@ -132,13 +139,13 @@ export default function Explore() {
         ) : (
           <div className="grid gap-4 pt-5 md:grid-cols-2">
             {feed.map((item) => {
-              const meta = typeMeta[item.type] || { label: item.type || 'Content', icon: 'FileText', to: '/explore' };
+              const meta = typeMeta[item.type] || { label: item.type || 'Content', icon: 'FileText' };
               return (
                 <article key={item.id} className="rounded-2xl border border-border bg-card p-5 shadow-xs transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-primary"><ApperIcon name={meta.icon} size={15} /></span>{meta.label}<span className="mx-1">·</span>{formatDate(item.created_at)}</div>
                   <h3 className="mt-4 font-heading text-2xl leading-tight">{item.title || meta.label}</h3>
                   <p className="mt-3 line-clamp-4 text-sm leading-6 text-muted-foreground">{item.body}</p>
-                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/70 pt-4 text-xs text-muted-foreground"><span>By {item.author_name || 'Member'}</span><Link to={meta.to} className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:text-primary">Explore <ApperIcon name="ArrowUpRight" size={14} /></Link></div>
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-border/70 pt-4 text-xs text-muted-foreground"><span>By {item.author_name || 'Member'}</span>{meta.to ? <Link to={meta.to} className="inline-flex items-center gap-1.5 font-semibold text-foreground hover:text-primary">Explore <ApperIcon name="ArrowUpRight" size={14} /></Link> : <span className="text-muted-foreground">Public</span>}</div>
                 </article>
               );
             })}
