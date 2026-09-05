@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { APP_CONFIG } from '@/config/app.config';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import ThemeToggle from '@/components/ThemeToggle';
 import ApperIcon from '@/components/ApperIcon';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
