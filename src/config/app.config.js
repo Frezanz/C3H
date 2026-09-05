@@ -2,7 +2,7 @@ export const APP_CONFIG = {
   name: 'Free, Open & Powerful',
   tagline: 'Community awareness, preparedness, and collective capability.',
   emoji: '🧭',
-  icon: 'Compass',
+  icon: 'ShieldCheck',
   defaultTheme: 'light',
   defaultLoginRoute: '/login',
 };
